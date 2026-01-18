@@ -4,16 +4,14 @@ services:
     image: postgis/postgis:15-3.3
     container_name: dcs_postgis_db
     restart: always
-    environment:
-      POSTGRES_DB: DCS
-      POSTGRES_USER: kevin
-      POSTGRES_PASSWORD: kevin
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U kevin -d DCS"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -34,12 +32,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      DB_HOST: db
-      DB_NAME: DCS
-      DB_USER: kevin
-      DB_PASSWORD: kevin
-      DB_PORT: 5432
 
 volumes:
   postgres_data:
